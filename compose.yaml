@@ -1,0 +1,28 @@
+services:
+  app:
+    build: .
+    env_file:
+      - .env
+    network_mode: "host"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cyber_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - secure_db_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d cyber_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  secure_db_volume:

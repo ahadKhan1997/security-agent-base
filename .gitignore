@@ -1,0 +1,17 @@
+# Local virtual environments
+.venv/
+venv/
+ENV/
+
+# Secrets and local configurations
+.env
+*.env
+
+# Python build artifacts and caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS metadata
+.DS_Store
+Thumbs.db
