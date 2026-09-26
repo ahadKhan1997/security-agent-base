@@ -1,6 +1,7 @@
 # Stage 1: Build phase
 FROM python:3.12-slim AS package-builder
 WORKDIR /app
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
 RUN pip install --no-cache-dir pydantic pydantic-settings httpx python-dotenv
 
 # Stage 2: Hardened Runtime environment

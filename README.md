@@ -18,6 +18,9 @@ run docker image of this project:
 to see logs of docker:
     docker compose logs app
 
+to scan image:
+    docker scout cves local://security-agent-base-app:latest
+
 
 week 0:
 💻 1. The Python Blueprint: Configuration & Execution
