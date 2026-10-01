@@ -4,9 +4,8 @@ on:
   push:
     branches: [ main, master, development ]
   pull_request:
-    branches: [ main, master, development ]
+    branches: [ main, master ]
 
-# 🏎️ Concurrency Control: Automatically abort older processing workflows running on the exact same branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -19,11 +18,10 @@ jobs:
     name: Launch Reusable Pipeline Array
     strategy:
       matrix:
-        # Executes testing loops concurrently in separate virtual containers
         python-version: ["3.11", "3.12"]
     
-    # 🔗 Utilizing the Caller pattern to invoke the reusable orchestration framework natively
     uses: ./.github/workflows/python-ci.yml
     with:
       python-version: ${{ matrix.python-version }}
-      working-directory: "."
+      # Crucial Adjustment: Set this explicitly to point to your project subdirectory folder
+      working-directory: "./security-agent-base"
