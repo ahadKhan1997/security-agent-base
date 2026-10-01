@@ -49,7 +49,7 @@ jobs:
 
       - name: Execute Isolated Automated Test Framework
         env:
-          PYTHONPATH: ${{ inputs.working-directory }}
+          PYTHONPATH: "."
           GROQ_API_KEY: "mock_key_to_satisfy_ingestion_rules"
         # Only run pytest if test files exist to prevent collection failures
         run: |

@@ -24,4 +24,4 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
       # Crucial Adjustment: Set this explicitly to point to your project subdirectory folder
-      working-directory: "./security-agent-base"
+      working-directory: "."
