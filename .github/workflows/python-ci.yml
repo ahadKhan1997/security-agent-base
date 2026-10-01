@@ -1,0 +1,80 @@
+name: Reusable Python DevSecOps CI
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+        description: "The targeted runtime version of Python to test against"
+      working-directory:
+        required: false
+        type: string
+        default: "."
+        description: "The directory paths where target execution packages reside"
+    secrets:
+      MOCK_SECRET_TOKEN:
+        required: false
+        description: "An example placeholder demonstrating secure secret passing pipelines"
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    name: Test Suite (Python ${{ inputs.python-version }})
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+
+    steps:
+      # 🛡️ Hardening Rule: Third-party actions pinned to absolute 40-character Git Commit SHAs instead of mutable tags
+      - name: Checkout Source Code Baseline
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Bounded Python Runtime Environment
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v6.1.0
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'pip' # Automatically caches dependency layers natively
+
+      - name: Install Project Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pydantic pydantic-settings httpx python-dotenv langchain langchain-core langchain-groq pytest ruff
+
+      - name: Execute Code Compliance Verification (Linter)
+        run: ruff check .
+
+      - name: Execute Isolated Automated Test Framework
+        env:
+          PYTHONPATH: ${{ inputs.working-directory }}
+          GROQ_API_KEY: "mock_key_to_satisfy_ingestion_rules"
+        run: pytest
+
+  security-scans:
+    name: DevSecOps Vulnerability Audits
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Source Code Baseline
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # 🔍 Step A: Automated Secrets Scanning (Gitleaks)
+      - name: Check for Accidentally Leaked Credentials (Gitleaks)
+        uses: gitleaks/gitleaks-action@7cc274353d9da8d1209b55db56d4b537d94f277c # v2.3.8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 🐳 Step B: Container Image Compilation and Vulnerability Scanning (Trivy)
+      - name: Compile Container Security Layer Baseline
+        run: docker build -t local-test-app:latest .
+
+      - name: Audit Container Static Assets (Trivy)
+        uses: aquasecurity/trivy-action@18f2514ee49ff05bcd51222b8263cf9236626484 # v0.29.0
+        with:
+          image-ref: 'local-test-app:latest'
+          format: 'table'
+          exit-code: '0' # Reports findings into logs without throwing abrupt exit block failures
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
