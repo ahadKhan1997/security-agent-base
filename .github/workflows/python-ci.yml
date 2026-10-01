@@ -52,12 +52,7 @@ jobs:
           PYTHONPATH: "."
           GROQ_API_KEY: "mock_key_to_satisfy_ingestion_rules"
         # Only run pytest if test files exist to prevent collection failures
-        run: |
-          if [ -d "tests" ] && [ "$(ls -A tests)" ]; then
-            pytest
-          else
-            echo "⚠️ No test files collected in this branch directory layout. Skipping validation layer."
-          fi
+          run: pytest tests/
 
   security-scans:
     name: DevSecOps Vulnerability Audits
