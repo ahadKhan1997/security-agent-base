@@ -52,7 +52,7 @@ jobs:
           PYTHONPATH: "."
           GROQ_API_KEY: "mock_key_to_satisfy_ingestion_rules"
         # Only run pytest if test files exist to prevent collection failures
-          run: pytest tests/
+        run: pytest tests/
 
   security-scans:
     name: DevSecOps Vulnerability Audits
