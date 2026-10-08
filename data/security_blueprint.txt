@@ -1,0 +1,3 @@
+DEVMETRIC-POLICY-01: All production multi-stage container builds must omit debugging utilities.
+DEVMETRIC-POLICY-02: Secret detection hooks like Gitleaks must run during pre-merge staging pull loops.
+DEVMETRIC-POLICY-03: Container base OS layers must run vulnerability scanning routines weekly via Trivy.

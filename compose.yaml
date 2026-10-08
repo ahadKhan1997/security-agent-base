@@ -3,7 +3,9 @@ services:
     build: .
     env_file:
       - .env
-    network_mode: "host"
+    # ──► DOCKER RUNTIME PERSISTENT TTY SHIELD
+    # Forces the container allocation wrapper to remain active in background spaces
+    tty: true
     depends_on:
       db:
         condition: service_healthy
