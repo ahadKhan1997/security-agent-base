@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-agent-app
+  namespace: default
+  labels:
+    app: security-agent
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: security-agent
+  template:
+    metadata:
+      labels:
+        app: security-agent
+    spec:
+      containers:
+        - name: app-core
+          image: security-agent-base-app:v3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"
+          envFrom:
+            - configMapRef:
+                name: app-config
+            - secretRef:
+                name: app-secrets
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 5
